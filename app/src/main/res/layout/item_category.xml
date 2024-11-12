@@ -5,7 +5,7 @@
     android:layout_marginEnd="16dp">
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/siv_menu_category_img"
+        android:id="@+id/siv_category_img"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:scaleType="centerCrop"
@@ -16,7 +16,7 @@
         app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full" />
 
     <TextView
-        android:id="@+id/tv_menu_category_name"
+        android:id="@+id/tv_category_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="4dp"
@@ -24,5 +24,5 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/siv_menu_category_img" />
+        app:layout_constraintTop_toBottomOf="@id/siv_category_img" />
 </androidx.constraintlayout.widget.ConstraintLayout>
