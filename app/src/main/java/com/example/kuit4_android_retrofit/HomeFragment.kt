@@ -13,10 +13,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.kuit4_android_retrofit.data.CategoryData
+import com.example.kuit4_android_retrofit.data.PopularData
 import com.example.kuit4_android_retrofit.databinding.FragmentHomeBinding
 import com.example.kuit4_android_retrofit.databinding.ItemCategoryBinding
 import com.example.kuit4_android_retrofit.retrofit.RetrofitObject
 import com.example.kuit4_android_retrofit.retrofit.service.CategoryService
+import com.example.kuit4_android_retrofit.retrofit.service.HomePopularService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -25,6 +27,7 @@ import retrofit2.Response
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
+    private lateinit var popularAdapter: RVPopularMenuAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,8 +37,40 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         fetchCategoryInfo()
+        fetchPopularInfo()
 
         return binding.root
+    }
+
+    private fun fetchPopularInfo() {
+        val service = RetrofitObject.retrofit.create(HomePopularService::class.java)
+        val call = service.getPopular()
+
+        call.enqueue(
+            object : retrofit2.Callback<List<PopularData>> {
+                override fun onResponse(
+                    call: Call<List<PopularData>>,
+                    response: Response<List<PopularData>>
+                ) {
+                    if(response.isSuccessful) {
+                        val popularResponse = response.body()
+
+                        if (!popularResponse.isNullOrEmpty()) {
+                            showPopularInfo(popularResponse)
+                        } else {
+                            Log.d("빈값받아옴", "빈값받아옴")
+                        }
+                    } else {
+                        Log.d("서버 응답 실패", "서버 응답 실패")
+                    }
+                }
+
+                override fun onFailure(call: Call<List<PopularData>>, t: Throwable) {
+                    Log.d("실패3", "실패3")
+                }
+
+            }
+        )
     }
 
     private fun fetchCategoryInfo() {
@@ -93,5 +128,13 @@ class HomeFragment : Fragment() {
             // 레이아웃에 카테고리 항목 추가
             binding.llMainMenuCategory.addView(categoryBinding.root)
         }
+    }
+
+    private fun showPopularInfo(popularList: List<PopularData>) {
+        popularAdapter = RVPopularMenuAdapter(popularList)
+        binding.rvMainPopularMenus.adapter = popularAdapter
+        binding.rvMainPopularMenus.layoutManager = LinearLayoutManager(requireContext())
+        popularAdapter.notifyDataSetChanged()
+
     }
 }
